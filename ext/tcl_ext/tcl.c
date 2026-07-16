@@ -55,7 +55,7 @@ static int rb_tcl_interp_send(ClientData clientData, Tcl_Interp *interp, int obj
     const char *element;
 
     element = Tcl_GetStringFromObj(objv[i], &element_length);
-    rb_ary_push(interp_receive_args, rb_tainted_str_new2(element));
+    rb_ary_push(interp_receive_args, rb_str_new2(element));
   }
 
   VALUE args = rb_ary_new3(2, (VALUE) clientData, interp_receive_args);
@@ -134,7 +134,7 @@ static VALUE rb_tcl_interp_eval(VALUE self, VALUE script) {
 
   switch (result) {
     case TCL_OK:
-      return rb_tainted_str_new2(Tcl_GetStringResult(tcl_interp->interp));
+      return rb_str_new2(Tcl_GetStringResult(tcl_interp->interp));
     case TCL_ERROR:
       if (NIL_P(tcl_interp->exit_exception)) {
         rb_raise(error_class, "%s", Tcl_GetStringResult(tcl_interp->interp));
@@ -171,7 +171,7 @@ static VALUE rb_tcl_interp_list_to_array(VALUE self, VALUE list) {
     const char *element;
 
     element = Tcl_GetStringFromObj(elements[i], &element_length);
-    rb_ary_push(result, element ? rb_tainted_str_new(element, element_length) : rb_str_new2(""));
+    rb_ary_push(result, element ? rb_str_new(element, element_length) : rb_str_new2(""));
     Tcl_DecrRefCount(elements[i]);
   }
 
@@ -198,7 +198,7 @@ static VALUE rb_tcl_interp_array_to_list(VALUE self, VALUE array) {
     Tcl_DecrRefCount(string);
   }
 
-  VALUE result = rb_tainted_str_new2(Tcl_GetStringFromObj(list, NULL));
+  VALUE result = rb_str_new2(Tcl_GetStringFromObj(list, NULL));
 
   Tcl_DecrRefCount(list);
 

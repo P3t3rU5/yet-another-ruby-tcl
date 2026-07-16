@@ -5,21 +5,21 @@ module Tcl
         attr_reader :interp
       end
     end
-    
+
     def _(*args)
       interp.array_to_list(args)
     end
-    
+
     def _!(*args)
       interp.eval(_(*args))
     end
-    
-    def method_missing(name, *args, &block)
-      if interp.respond_to?(name)
-        interp.send(name, *args, &block)
-      else
-        super
-      end
+
+    def method_missing(name, ...)
+      interp.respond_to?(name) ? interp.send(name, ...) : super
+    end
+
+    def respond_to_missing?(name, include_private = false)
+      interp.respond_to?(name) || super
     end
   end
 end

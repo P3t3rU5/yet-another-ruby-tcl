@@ -1,6 +1,6 @@
 require 'tcl_ext'
-require "ruby-tcl/version"
-require "tcl/interp_helper"
-require "tcl/interp"
-require "tcl/proc"
-require "tcl/var"
+
+require_relative 'tcl/interp_helper'
+require_relative 'tcl/interp'
+require_relative 'tcl/proc'
+require_relative 'tcl/var'
