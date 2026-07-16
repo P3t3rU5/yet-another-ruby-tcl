@@ -5,4 +5,9 @@ require 'mkmf'
 
 dir_config('tcl')
 have_library('tcl') unless have_library('tcl8.5')
+find_header('tcl.h',
+            "#{CONFIG['prefix']}/include",
+            "#{CONFIG['prefix']}/include/tcl8.5",
+            "/usr/include",
+            "/usr/include/tcl8.5")
 create_makefile("tcl_ext")
