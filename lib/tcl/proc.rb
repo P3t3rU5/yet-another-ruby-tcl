@@ -4,8 +4,8 @@ module Tcl
       auto_execok auto_import auto_load auto_load_index
       auto_qualify tclLog unknown
     ].freeze
-
-    include InterpHelper
+    include Utils
+    include Delegator
 
     attr_reader :name
 

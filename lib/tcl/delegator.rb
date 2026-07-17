@@ -1,17 +1,9 @@
 module Tcl
-  module InterpHelper
+  module Delegator
     def self.included(klass)
       klass.class_eval do
         attr_reader :interp
       end
-    end
-
-    def _(*args)
-      interp.array_to_list(args)
-    end
-
-    def _!(*args)
-      interp.eval(_(*args))
     end
 
     def method_missing(name, ...)
@@ -19,7 +11,7 @@ module Tcl
     end
 
     def respond_to_missing?(name, include_private = false)
-      interp.respond_to?(name) || super
+      interp.respond_to?(name, include_private) || super
     end
   end
 end

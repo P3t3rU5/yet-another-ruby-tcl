@@ -1,12 +1,10 @@
 module Tcl
   class Interp
-    include InterpHelper
+    include Utils
 
     class << self
       def load_from_file(filename)
-        interp = new
-        interp.eval(File.read(filename))
-        interp
+        new.tap { _1.eval(File.read(filename)) }
       end
     end
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require_relative 'test_helper'
 
 class InterpWithNoReceiveMethod < Tcl::Interp
   undef_method :interp_receive
@@ -83,8 +83,8 @@ class InterpReceiveTest < Test::Unit::TestCase
   end
 
   def test_interp_send_converts_non_string_results_to_string
-    assert_equal '0',  @interp.eval('interp_send multiply_by_5 0')
-    assert_equal '25', @interp.eval('interp_send multiply_by_5 5')
+    assert_equal '0',  @interp.eval('interp_send multiply_by5 0')
+    assert_equal '25', @interp.eval('interp_send multiply_by5 5')
   end
 
   def test_interp_send_with_custom_interp_receive_method

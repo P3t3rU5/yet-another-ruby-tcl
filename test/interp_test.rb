@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'test_helper'
+
 warn Tcl::Interp.inspect
 
 class InterpTest < Test::Unit::TestCase

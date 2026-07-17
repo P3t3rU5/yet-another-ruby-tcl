@@ -5,7 +5,8 @@ module Tcl
       tcl_libPath tcl_library tcl_patchLevel tcl_pkgPath tcl_platform tcl_version
     ].freeze
 
-    include InterpHelper
+    include Utils
+    include Delegator
 
     class << self
       def find(interp, name)
@@ -49,6 +50,14 @@ module Tcl
 
     def to_tcl
       _(:array, :set, name, value)
+    end
+
+    def to_a
+      value.split.each_slice(2)
+    end
+
+    def to_h
+      to_a.to_h
     end
   end
 end
