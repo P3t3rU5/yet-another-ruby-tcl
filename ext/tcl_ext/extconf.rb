@@ -19,7 +19,13 @@ unless pkg_config('tcl')
               end
 
   # Check for the header file
-  unless have_header('tcl.h') || have_header('tcl8.6/tcl.h') || have_header('tcl8.5/tcl.h')
+  unless have_header('tcl.h') || find_header('tcl.h',
+                                             '/usr/include/tcl8.6',
+                                             '/usr/include/tcl8.5',
+                                             '/usr/local/include/tcl8.6',
+                                             '/usr/local/include/tcl8.5',
+                                             '/opt/homebrew/include',
+                                             '/opt/homebrew/opt/tcl-tk/include')
     abort "\n*** ERROR: Cannot find tcl.h. Please install Tcl development headers or use --with-tcl-include ***\n"
   end
 
