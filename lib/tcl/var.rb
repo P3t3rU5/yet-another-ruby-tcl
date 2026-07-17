@@ -53,7 +53,7 @@ module Tcl
     end
 
     def to_a
-      value.split.each_slice(2)
+      value.split.each_slice(2).to_a
     end
 
     def to_h
