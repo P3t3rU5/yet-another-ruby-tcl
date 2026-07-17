@@ -6,14 +6,26 @@ typedef struct {
   VALUE exit_exception;
 } tcl_interp_struct;
 
-static VALUE rb_value_to_s(VALUE value) {
-  return rb_funcall(value, rb_intern("to_s"), 0, 0);
-}
-
-static void rb_tcl_interp_destroy(tcl_interp_struct *tcl_interp) {
+static void rb_tcl_interp_destroy(void *ptr) {
+  tcl_interp_struct *tcl_interp = (tcl_interp_struct *)ptr;
   Tcl_DeleteInterp(tcl_interp->interp);
   Tcl_Release(tcl_interp->interp);
   free(tcl_interp);
+}
+
+static const rb_data_type_t tcl_interp_type = {
+    "tcl_interp_struct", // Name of the type
+    {
+        0,                     // dmark function (or 0 if none)
+        rb_tcl_interp_destroy, // dfree function (replace with your actual free func)
+        0,                     // dsize function (or 0 if none)
+    },
+    0, 0, RUBY_TYPED_FREE_IMMEDIATELY
+};
+
+
+static VALUE rb_value_to_s(VALUE value) {
+  return rb_funcall(value, rb_intern("to_s"), 0, 0);
 }
 
 static VALUE rb_tcl_interp_send_begin(VALUE args) {
@@ -23,7 +35,7 @@ static VALUE rb_tcl_interp_send_begin(VALUE args) {
   VALUE result = rb_funcall2(obj, rb_intern("interp_receive"), RARRAY_LEN(interp_receive_args), RARRAY_PTR(interp_receive_args));
 
   tcl_interp_struct *tcl_interp;
-  Data_Get_Struct(obj, tcl_interp_struct, tcl_interp);
+  TypedData_Get_Struct(obj, tcl_interp_struct, &tcl_interp_type, tcl_interp);
 
   char *tcl_result = strdup(RSTRING_PTR(rb_value_to_s(result)));
   Tcl_SetResult(tcl_interp->interp, tcl_result, (Tcl_FreeProc *)free);
@@ -34,7 +46,7 @@ static VALUE rb_tcl_interp_send_begin(VALUE args) {
 static VALUE rb_tcl_interp_send_rescue(VALUE args, VALUE error_info) {
   VALUE obj = rb_ary_entry(args, 0);
   tcl_interp_struct *tcl_interp;
-  Data_Get_Struct(obj, tcl_interp_struct, tcl_interp);
+  TypedData_Get_Struct(obj, tcl_interp_struct, &tcl_interp_type, tcl_interp);
 
   char *tcl_result = strdup(RSTRING_PTR(rb_value_to_s(error_info)));
   Tcl_SetResult(tcl_interp->interp, tcl_result, (Tcl_FreeProc *)free);
@@ -69,7 +81,7 @@ static int rb_tcl_interp_send(ClientData clientData, Tcl_Interp *interp, int obj
 
 static VALUE rb_tcl_interp_allocate(VALUE klass) {
   tcl_interp_struct *tcl_interp;
-  VALUE obj = Data_Make_Struct(klass, tcl_interp_struct, NULL, rb_tcl_interp_destroy, tcl_interp);
+  VALUE obj = TypedData_Make_Struct(klass, tcl_interp_struct, &tcl_interp_type, tcl_interp);
 
   tcl_interp->interp = Tcl_CreateInterp();
   tcl_interp->exit_exception = Qnil;
@@ -85,7 +97,7 @@ static VALUE rb_tcl_safe_interp_allocate(VALUE klass) {
   VALUE obj = rb_tcl_interp_allocate(klass);
 
   tcl_interp_struct *tcl_interp;
-  Data_Get_Struct(obj, tcl_interp_struct, tcl_interp);
+  TypedData_Get_Struct(obj, tcl_interp_struct, &tcl_interp_type, tcl_interp);
 
   Tcl_MakeSafe(tcl_interp->interp);
 
@@ -105,7 +117,7 @@ static VALUE rb_tcl_interp_eval(VALUE self, VALUE script) {
 #endif
 
   tcl_interp_struct *tcl_interp;
-  Data_Get_Struct(self, tcl_interp_struct, tcl_interp);
+  TypedData_Get_Struct(self, tcl_interp_struct, &tcl_interp_type, tcl_interp);
 
 #ifdef TCL_LIMIT_TIME
   if (timeout > 0) {
@@ -148,7 +160,7 @@ static VALUE rb_tcl_interp_eval(VALUE self, VALUE script) {
 
 static VALUE rb_tcl_interp_list_to_array(VALUE self, VALUE list) {
   tcl_interp_struct *tcl_interp;
-  Data_Get_Struct(self, tcl_interp_struct, tcl_interp);
+  TypedData_Get_Struct(self, tcl_interp_struct, &tcl_interp_type, tcl_interp);
 
   Tcl_Obj *string = Tcl_NewStringObj(RSTRING_PTR(rb_value_to_s(list)), -1);
   Tcl_IncrRefCount(string);
@@ -182,7 +194,7 @@ static VALUE rb_tcl_interp_list_to_array(VALUE self, VALUE list) {
 
 static VALUE rb_tcl_interp_array_to_list(VALUE self, VALUE array) {
   tcl_interp_struct *tcl_interp;
-  Data_Get_Struct(self, tcl_interp_struct, tcl_interp);
+  TypedData_Get_Struct(self, tcl_interp_struct, &tcl_interp_type, tcl_interp);
 
   int array_length = RARRAY_LEN(array), i;
 
