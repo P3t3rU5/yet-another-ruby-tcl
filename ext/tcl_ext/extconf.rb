@@ -35,9 +35,6 @@ unless pkg_config('tcl')
     have_library(lib, 'Tcl_Init')
   end
 
-  unless found_lib
-    abort "\n*** ERROR: Cannot find the Tcl library. Please install Tcl or use --with-tcl-lib ***\n"
-  end
+  abort "\n*** ERROR: Cannot find the Tcl library. Please install Tcl or use --with-tcl-lib ***\n" unless found_lib
 end
 create_makefile('tcl_ext')
-

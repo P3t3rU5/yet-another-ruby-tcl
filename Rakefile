@@ -44,6 +44,6 @@ end
 
 require 'rake/extensiontask'
 Rake::ExtensionTask.new('tcl_ext', RUBY_TCL_SPEC)
-CLEAN.include %w[**/*.{o,bundle,jar,so,obj,pdb,lib,def,exp,log} pkg/ tmp/]
+CLEAN.include %w[**/*.{o,bundle,jar,so,obj,pdb,lib,def,exp,log} pkg/ tmp/ rdoc/ doc/]
 
-task default: %i[compile test rubocop]
+task default: %i[clean compile test rubocop rdoc build install]

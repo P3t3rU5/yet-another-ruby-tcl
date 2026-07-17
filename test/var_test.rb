@@ -37,13 +37,13 @@ class VarTest < Test::Unit::TestCase
     assert_equal 'array set b {a 1 b 2}', @interp.var('b').to_tcl
   end
 
-  def test_array_var_to_tcl_does_not_modify_errorInfo
+  def test_array_var_to_tcl_does_not_modify_error_info
     assert_errorinfo ''
     Tcl::Var.find(@interp, 'b')
     assert_errorinfo ''
   end
 
-  def test_attempting_to_find_nonexistent_variable_does_not_modify_errorInfo
+  def test_attempting_to_find_nonexistent_variable_does_not_modify_error_info
     assert_errorinfo ''
     assert_raises(Tcl::Error) { Tcl::Var.find(@interp, 'nonexistent') }
     assert_errorinfo ''

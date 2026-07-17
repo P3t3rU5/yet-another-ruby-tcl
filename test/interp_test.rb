@@ -51,16 +51,25 @@ class InterpTest < Test::Unit::TestCase
     assert_equal '{"}',      @interp.array_to_list(['"'])
   end
 
-  def test_list_to_array
-    assert_equal [],               @interp.list_to_array('')
-    assert_equal [''],             @interp.list_to_array('{}')
-    assert_equal ['one'],          @interp.list_to_array('one')
-    assert_equal %w[one two],      @interp.list_to_array('one two')
+  def test_list_to_array_empty
+    assert_equal [], @interp.list_to_array('')
+    assert_equal [''], @interp.list_to_array('{}')
+  end
+
+  def test_list_to_array_simple_strings
+    assert_equal ['one'], @interp.list_to_array('one')
+    assert_equal %w[one two], @interp.list_to_array('one two')
+  end
+
+  def test_list_to_array_escaped_spaces
     assert_equal ['a', ' b', 'c'], @interp.list_to_array('a { b} c')
     assert_equal ['a', ' b', 'c'], @interp.list_to_array('a \\ b c')
-    assert_equal ['{'],            @interp.list_to_array('\\{')
-    assert_equal ['['],            @interp.list_to_array('\\[')
-    assert_equal ['"'],            @interp.list_to_array('\"')
+  end
+
+  def test_list_to_array_escaped_characters
+    assert_equal ['{'], @interp.list_to_array('\\{')
+    assert_equal ['['], @interp.list_to_array('\\[')
+    assert_equal ['"'], @interp.list_to_array('\"')
   end
 
   def test_procs
