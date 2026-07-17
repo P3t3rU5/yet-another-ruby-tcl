@@ -217,7 +217,7 @@ static VALUE rb_tcl_interp_array_to_list(VALUE self, VALUE array) {
   return result;
 }
 
-void Init_tcl_ext() {
+void Init_tcl_ext(void) {
   VALUE tcl_module = rb_define_module("Tcl");
   VALUE interp_class = rb_define_class_under(tcl_module, "Interp", rb_cObject);
   VALUE safe_interp_class = rb_define_class_under(tcl_module, "SafeInterp", interp_class);
@@ -229,7 +229,7 @@ void Init_tcl_ext() {
   rb_define_method(interp_class, "array_to_list", rb_tcl_interp_array_to_list, 1);
 
 #ifdef TCL_LIMIT_TIME
-  VALUE timeout_class = rb_define_class_under(tcl_module, "Timeout", error_class);
+  rb_define_class_under(tcl_module, "Timeout", error_class);
   rb_define_method(interp_class, "eval", rb_tcl_interp_eval, -2);
 #else
   rb_define_method(interp_class, "eval", rb_tcl_interp_eval, 1);
